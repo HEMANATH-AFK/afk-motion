@@ -1,0 +1,53 @@
+{
+  "name": "afk-motion",
+  "version": "0.1.0",
+  "description": "Premium React micro-interaction library for modern portfolios",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "type-check": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "react",
+    "framer-motion",
+    "animation",
+    "tilt",
+    "magnetic-button",
+    "micro-interaction",
+    "parallax",
+    "portfolio"
+  ],
+  "author": "Hemanath AFK",
+  "license": "MIT",
+  "peerDependencies": {
+    "framer-motion": ">=11.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "framer-motion": "^11.18.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vite-plugin-dts": "^4.4.0"
+  }
+}
