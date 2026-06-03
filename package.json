@@ -1,6 +1,9 @@
 {
-  "name": "afk-motion",
+  "name": "@hemanath-afk/afk-motion",
   "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Premium React micro-interaction library for modern portfolios",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
