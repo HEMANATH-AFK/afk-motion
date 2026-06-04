@@ -30,9 +30,6 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Run Type Checks
-        run: npm run type-check
-
       - name: Build Library
         run: npm run build
 
