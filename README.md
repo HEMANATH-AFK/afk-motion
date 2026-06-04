@@ -1,8 +1,8 @@
 # afk-motion
 
-[![npm version](https://img.shields.io/npm/v/afk-motion.svg?style=flat-square)](https://www.npmjs.com/package/afk-motion)
-[![license](https://img.shields.io/npm/l/afk-motion.svg?style=flat-square)](https://github.com/hemanath-afk/afk-motion/blob/main/LICENSE)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/afk-motion?style=flat-square)](https://bundlephobia.com/package/afk-motion)
+[![npm version](https://img.shields.io/npm/v/@hemanath-afk/afk-motion.svg?style=flat-square)](https://www.npmjs.com/package/@hemanath-afk/afk-motion)
+[![license](https://img.shields.io/npm/l/@hemanath-afk/afk-motion.svg?style=flat-square)](https://github.com/HEMANATH-AFK/afk-motion/blob/main/LICENSE)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@hemanath-afk/afk-motion?style=flat-square)](https://bundlephobia.com/package/@hemanath-afk/afk-motion)
 
 A high-performance, tree-shakeable, zero-css-config React 19+ micro-interaction library designed for modern portfolios, agency showcases, and premium landing experiences. 
 
@@ -24,11 +24,11 @@ Inspired by Apple TV cards, GSAP spring mechanics, and Framer Motion ease, `afk-
 ## 📦 Installation
 
 ```bash
-npm install afk-motion
+npm install @hemanath-afk/afk-motion
 # or
-yarn add afk-motion
+yarn add @hemanath-afk/afk-motion
 # or
-pnpm add afk-motion
+pnpm add @hemanath-afk/afk-motion
 ```
 
 *Note: React 19 is a peer dependency.*
@@ -42,7 +42,7 @@ pnpm add afk-motion
 Tracks relative cursor movement within an element to apply dynamic 3D tilting, radial spotlight glowing overlays, and shadow displacement pointing away from the light source.
 
 ```tsx
-import { CoordinateHover } from "afk-motion";
+import { CoordinateHover } from "@hemanath-afk/afk-motion";
 
 export default function SkillCard() {
   return (
@@ -91,7 +91,7 @@ export default function SkillCard() {
 Takes stacked image layers and translates them at different rates depending on mouse position. Renders a stunning 3D perspective effect.
 
 ```tsx
-import { ImageDepthHover } from "afk-motion";
+import { ImageDepthHover } from "@hemanath-afk/afk-motion";
 
 export default function ParallaxShowcase() {
   return (
@@ -130,7 +130,7 @@ export default function ParallaxShowcase() {
 A premium, customizable floating button that triggers smooth scrolling to page top, complete with an SVG scroll-depth progress ring.
 
 ```tsx
-import { ScrollTop } from "afk-motion";
+import { ScrollTop } from "@hemanath-afk/afk-motion";
 
 export default function App() {
   return (
@@ -169,7 +169,7 @@ export default function App() {
 Attracts the button element toward the mouse pointer when within range, creating elastic cursor magnets using custom springs.
 
 ```tsx
-import { MagneticButton } from "afk-motion";
+import { MagneticButton } from "@hemanath-afk/afk-motion";
 
 export default function Contact() {
   return (
@@ -198,7 +198,7 @@ export default function Contact() {
 Generates a gorgeous blurred glowing circle that smoothly follows mouse movements. Automatically expands and shifts scale when hover coordinates overlap interactive links or buttons.
 
 ```tsx
-import { CursorGlow } from "afk-motion";
+import { CursorGlow } from "@hemanath-afk/afk-motion";
 
 export default function Layout({ children }) {
   return (
@@ -228,7 +228,7 @@ export default function Layout({ children }) {
 Interpolates component styles proportionally based on viewport entrance bounds or linear scroll progress.
 
 ```tsx
-import { ScrollPlay } from "afk-motion";
+import { ScrollPlay } from "@hemanath-afk/afk-motion";
 
 export default function ParallaxText() {
   return (
