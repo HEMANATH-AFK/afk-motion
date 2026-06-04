@@ -1,8 +1,8 @@
 # afk-motion
 
-[![npm version](https://img.shields.io/npm/v/@hemanath-afk/afk-motion.svg?style=flat-square)](https://www.npmjs.com/package/@hemanath-afk/afk-motion)
-[![license](https://img.shields.io/npm/l/@hemanath-afk/afk-motion.svg?style=flat-square)](https://github.com/hemanath-afk/afk-motion/blob/main/LICENSE)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/@hemanath-afk/afk-motion?style=flat-square)](https://bundlephobia.com/package/afk-motion)
+[![npm version](https://img.shields.io/npm/v/afk-motion.svg?style=flat-square)](https://www.npmjs.com/package/afk-motion)
+[![license](https://img.shields.io/npm/l/afk-motion.svg?style=flat-square)](https://github.com/hemanath-afk/afk-motion/blob/main/LICENSE)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/afk-motion?style=flat-square)](https://bundlephobia.com/package/afk-motion)
 
 A high-performance, tree-shakeable, zero-css-config React 19+ micro-interaction library designed for modern portfolios, agency showcases, and premium landing experiences. 
 
