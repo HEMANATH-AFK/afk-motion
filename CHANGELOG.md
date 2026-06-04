@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/HEMANATH-AFK/afk-motion/compare/v1.0.0...v1.1.0) (2026-06-04)
+
+
+### Bug Fixes
+
+* update package references in README badges ([daa5d9e](https://github.com/HEMANATH-AFK/afk-motion/commit/daa5d9e5062ed6dc9be1e3fd1c0ab9a865a68160))
+
+
+### Features
+
+* migrate codebase to JavaScript and add TextScramble, SpotlightCard, and GravityButton components ([4b9f90a](https://github.com/HEMANATH-AFK/afk-motion/commit/4b9f90a6700dacccee68255de076a133d42270bd))
+
 ## [1.0.1](https://github.com/HEMANATH-AFK/afk-motion/compare/v1.0.0...v1.0.1) (2026-06-04)
 
 
