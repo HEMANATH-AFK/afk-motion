@@ -1,28 +1,13 @@
-import React, { useRef, useEffect, HTMLAttributes } from "react";
+import React, { useRef, useEffect } from "react";
 import { useMousePosition } from "../hooks/useMousePosition";
 import { useSpringValue } from "../hooks/useSpring";
-
-export interface MagneticButtonProps extends HTMLAttributes<HTMLDivElement> {
-  /** Force multiplier of mouse attraction (0.0 to 1.0) */
-  strength?: number;
-  /** Hover threshold range in pixels (applies padding to expand the hover target zone) */
-  range?: number;
-  /** Spring stiffness coefficient */
-  stiffness?: number;
-  /** Spring damping coefficient */
-  damping?: number;
-  /** Custom class name for the wrapper hover container */
-  containerClassName?: string;
-  /** Custom inline style for the wrapper hover container */
-  containerStyle?: React.CSSProperties;
-}
 
 /**
  * MagneticButton - Elastic spring attraction button.
  * Pulls the button towards the cursor coordinates when hovered within range.
  * Runs on direct DOM transforms and spring loops for ultra-smooth 60fps response.
  */
-export const MagneticButton: React.FC<MagneticButtonProps> = ({
+export const MagneticButton = ({
   children,
   strength = 0.35,
   range = 45,
@@ -34,8 +19,8 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   className,
   ...props
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const { onChange } = useMousePosition(containerRef);
 
@@ -75,7 +60,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   }, [onChange, strength, xSpring, ySpring]);
 
   // Binds the interactive zone
-  const baseContainerStyle: React.CSSProperties = {
+  const baseContainerStyle = {
     display: "inline-block",
     padding: `${range}px`,
     margin: `-${range}px`, // Offsets padding to keep layout positioning stable
@@ -83,7 +68,7 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
     ...containerStyle,
   };
 
-  const baseButtonStyle: React.CSSProperties = {
+  const baseButtonStyle = {
     display: "inline-block",
     willChange: "transform",
     transition: "transform 0.08s ease-out",

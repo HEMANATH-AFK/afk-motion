@@ -1,18 +1,5 @@
-import React, { useRef, useEffect, HTMLAttributes } from "react";
-import { useTilt, TiltOptions } from "../hooks/useTilt";
-
-export interface CoordinateHoverProps extends HTMLAttributes<HTMLDivElement>, TiltOptions {
-  /** Enable mouse spotlight glow overlay */
-  glow?: boolean;
-  /** Color of the glow spotlight */
-  glowColor?: string;
-  /** Radius of the glow spotlight in pixels */
-  glowSize?: number;
-  /** Enable dynamic shadow displacement away from the cursor */
-  shadow?: boolean;
-  /** Color of the drop shadow */
-  shadowColor?: string;
-}
+import React, { useRef, useEffect } from "react";
+import { useTilt } from "../hooks/useTilt";
 
 /**
  * CoordinateHover - A high-performance 3D hover interaction component.
@@ -20,7 +7,7 @@ export interface CoordinateHoverProps extends HTMLAttributes<HTMLDivElement>, Ti
  * cursor-following spotlight glow, and dynamic shadow displacement.
  * Bypasses React re-renders using springs and direct DOM updates.
  */
-export const CoordinateHover: React.FC<CoordinateHoverProps> = ({
+export const CoordinateHover = ({
   children,
   maxTilt = 15,
   scale = 1.05,
@@ -36,7 +23,7 @@ export const CoordinateHover: React.FC<CoordinateHoverProps> = ({
   className,
   ...props
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef(null);
   const tilt = useTilt(containerRef, { maxTilt, scale, perspective, stiffness, damping });
 
   useEffect(() => {
@@ -98,7 +85,7 @@ export const CoordinateHover: React.FC<CoordinateHoverProps> = ({
   }, [tilt, perspective, glow, glowColor, glowSize, shadow, shadowColor]);
 
   // Direct CSS styling
-  const mergedStyle: React.CSSProperties = {
+  const mergedStyle = {
     position: "relative",
     willChange: "transform, box-shadow",
     transformStyle: "preserve-3d",

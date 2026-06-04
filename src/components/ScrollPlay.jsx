@@ -1,41 +1,5 @@
-import React, { useRef, useEffect, HTMLAttributes } from "react";
+import React, { useRef, useEffect } from "react";
 import { useScrollProgress } from "../hooks/useScrollProgress";
-
-export interface ScrollPlayState {
-  /** Opacity level (0.0 to 1.0) */
-  opacity?: number;
-  /** Translation along Y axis in pixels */
-  y?: number;
-  /** Translation along X axis in pixels */
-  x?: number;
-  /** Scale factor (e.g. 1.0) */
-  scale?: number;
-  /** Rotation angle in degrees */
-  rotate?: number;
-  /** Blur filter radius in pixels */
-  blur?: number;
-}
-
-export interface ScrollPlayProps extends HTMLAttributes<HTMLDivElement> {
-  /** Initial animation state when hidden or scroll progress is 0 */
-  from: ScrollPlayState;
-  /** Target animation state when fully active or scroll progress is 1 */
-  to: ScrollPlayState;
-  /** Animation triggering mode: 'viewport' (runs once on entry) or 'scroll' (scrubs animation based on scroll progress) */
-  mode?: "viewport" | "scroll";
-  /** If viewport mode, trigger the transition only once */
-  once?: boolean;
-  /** Viewport intersection threshold ratio (0.0 to 1.0) before triggering */
-  threshold?: number;
-  /** Duration of transition in ms (for viewport mode) */
-  duration?: number;
-  /** Delay of transition in ms (for viewport mode) */
-  delay?: number;
-  /** Easing curve for viewport transition (default: premium cubic-ease) */
-  ease?: string;
-  /** Multiplier for scroll-driven vertical parallax displacement */
-  parallaxSpeed?: number;
-}
 
 /**
  * ScrollPlay - Scroll-driven and viewport-triggered animation component.
@@ -43,7 +7,7 @@ export interface ScrollPlayProps extends HTMLAttributes<HTMLDivElement> {
  * or fading/sliding elements in on screen entry using IntersectionObserver.
  * Operates entirely without heavy animation libraries, maximizing performance.
  */
-export const ScrollPlay: React.FC<ScrollPlayProps> = ({
+export const ScrollPlay = ({
   children,
   from,
   to,
@@ -58,11 +22,11 @@ export const ScrollPlay: React.FC<ScrollPlayProps> = ({
   className,
   ...props
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef(null);
   const { onChange } = useScrollProgress(containerRef);
 
   // Helper to construct CSS style string for transforms and filters
-  const getStyles = (state: ScrollPlayState, progressVal?: number) => {
+  const getStyles = (state, progressVal) => {
     const opacity = state.opacity ?? 1;
     const x = state.x ?? 0;
     let y = state.y ?? 0;
@@ -124,10 +88,10 @@ export const ScrollPlay: React.FC<ScrollPlayProps> = ({
 
       return onChange(({ elementProgress }) => {
         // Interpolate individual attributes linearly
-        const interpolate = (start: number, end: number) =>
+        const interpolate = (start, end) =>
           start + (end - start) * elementProgress;
 
-        const currentFrameState: ScrollPlayState = {
+        const currentFrameState = {
           opacity: from.opacity !== undefined && to.opacity !== undefined
             ? interpolate(from.opacity, to.opacity)
             : undefined,
@@ -156,7 +120,7 @@ export const ScrollPlay: React.FC<ScrollPlayProps> = ({
     }
   }, [mode, once, threshold, duration, delay, ease, from, to, parallaxSpeed, onChange]);
 
-  const baseStyle: React.CSSProperties = {
+  const baseStyle = {
     willChange: "transform, opacity, filter",
     ...style,
   };

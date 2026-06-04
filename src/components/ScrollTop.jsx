@@ -1,31 +1,8 @@
-import React, { useRef, useEffect, HTMLAttributes } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useScrollProgress } from "../hooks/useScrollProgress";
 
-export interface ScrollTopProps extends HTMLAttributes<HTMLButtonElement> {
-  /** Size of the button in pixels (width/height) */
-  size?: number;
-  /** Scroll threshold (in px) before showing the button */
-  threshold?: number;
-  /** Duration of scroll animation in ms */
-  duration?: number;
-  /** Enable circular scroll progress ring */
-  progressRing?: boolean;
-  /** Color of the progress ring track */
-  progressColor?: string;
-  /** Width of the progress ring stroke */
-  strokeWidth?: number;
-  /** Enable glassmorphism design */
-  glass?: boolean;
-  /** Custom scroll easing function (takes progress 0-1 and returns eased value) */
-  easing?: (t: number) => number;
-  /** Enable floating mode (positions button fixed bottom right) */
-  floating?: boolean;
-  /** Custom icon component or SVG. If omitted, renders the premium dot arrow. */
-  icon?: React.ReactNode;
-}
-
 // Default cubic ease-in-out curve
-const easeInOutCubic = (t: number): number =>
+const easeInOutCubic = (t) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
 /**
@@ -34,7 +11,7 @@ const easeInOutCubic = (t: number): number =>
  * custom icons (renders a dotted arrow by default), and smooth easing scroll loops.
  * Employs direct DOM updates for optimal 60fps performance during scrolling.
  */
-export const ScrollTop: React.FC<ScrollTopProps> = ({
+export const ScrollTop = ({
   size = 60,
   threshold = 300,
   duration = 800,
@@ -49,8 +26,9 @@ export const ScrollTop: React.FC<ScrollTopProps> = ({
   className,
   ...props
 }) => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const progressCircleRef = useRef<SVGCircleElement>(null);
+  const buttonRef = useRef(null);
+  const progressCircleRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
   const { onChange } = useScrollProgress();
 
   // SVG Circle Calculations
@@ -58,7 +36,7 @@ export const ScrollTop: React.FC<ScrollTopProps> = ({
   const circumference = 2 * Math.PI * radius;
 
   // Custom smooth scroll animation
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (e) => {
     if (props.onClick) props.onClick(e);
 
     const start = window.scrollY;
@@ -66,7 +44,7 @@ export const ScrollTop: React.FC<ScrollTopProps> = ({
     const change = target - start;
     const startTime = performance.now();
 
-    const animateScroll = (currentTime: number) => {
+    const animateScroll = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progressVal = Math.min(elapsed / duration, 1);
       const eased = easing(progressVal);
@@ -92,7 +70,9 @@ export const ScrollTop: React.FC<ScrollTopProps> = ({
 
       // Handle visibility transitions
       button.style.opacity = shouldShow ? "1" : "0";
-      button.style.transform = shouldShow ? "scale(1)" : "scale(0.85)";
+      button.style.transform = shouldShow 
+        ? (isHovered ? "scale(1.08)" : "scale(1)") 
+        : "scale(0.85)";
       button.style.pointerEvents = shouldShow ? "all" : "none";
 
       // Handle progress ring strokeoffset
@@ -101,10 +81,10 @@ export const ScrollTop: React.FC<ScrollTopProps> = ({
         progressCircle.style.strokeDashoffset = `${offset}px`;
       }
     });
-  }, [onChange, threshold, circumference, progressRing]);
+  }, [onChange, threshold, circumference, progressRing, isHovered]);
 
   // Combined styling
-  const buttonStyle: React.CSSProperties = {
+  const buttonStyle = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -137,6 +117,18 @@ export const ScrollTop: React.FC<ScrollTopProps> = ({
     ...style,
   };
 
+  // Staggered dot animator style helper
+  const getDotStyle = (cy) => {
+    // Calculates a wave delay that moves from the bottom (cy=35) to the top (cy=15)
+    const delay = (35 - cy) * 0.015;
+    return {
+      transform: isHovered ? "translate3d(0, -4px, 0)" : "translate3d(0, 0, 0)",
+      opacity: isHovered ? 0.6 : 1,
+      transition: "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease",
+      transitionDelay: `${delay}s`,
+    };
+  };
+
   // Render default dotted arrow matching the visual guidelines
   const defaultIcon = (
     <svg
@@ -146,23 +138,23 @@ export const ScrollTop: React.FC<ScrollTopProps> = ({
       fill="currentColor"
       style={{
         display: "block",
-        transition: "transform 0.2s ease",
+        overflow: "visible",
       }}
     >
       {/* Arrow Head */}
-      <circle cx="24" cy="15" r="2.5" />
-      <circle cx="20" cy="19" r="2.5" />
-      <circle cx="24" cy="19" r="2.5" />
-      <circle cx="28" cy="19" r="2.5" />
-      <circle cx="16" cy="23" r="2.5" />
-      <circle cx="20" cy="23" r="2.5" />
-      <circle cx="24" cy="23" r="2.5" />
-      <circle cx="28" cy="23" r="2.5" />
-      <circle cx="32" cy="23" r="2.5" />
+      <circle cx="24" cy="15" r="2.3" style={getDotStyle(15)} />
+      <circle cx="20" cy="19" r="2.3" style={getDotStyle(19)} />
+      <circle cx="24" cy="19" r="2.3" style={getDotStyle(19)} />
+      <circle cx="28" cy="19" r="2.3" style={getDotStyle(19)} />
+      <circle cx="16" cy="23" r="2.3" style={getDotStyle(23)} />
+      <circle cx="20" cy="23" r="2.3" style={getDotStyle(23)} />
+      <circle cx="24" cy="23" r="2.3" style={getDotStyle(23)} />
+      <circle cx="28" cy="23" r="2.3" style={getDotStyle(23)} />
+      <circle cx="32" cy="23" r="2.3" style={getDotStyle(23)} />
       {/* Arrow Stem */}
-      <circle cx="24" cy="27" r="2.5" />
-      <circle cx="24" cy="31" r="2.5" />
-      <circle cx="24" cy="35" r="2.5" />
+      <circle cx="24" cy="27" r="2.3" style={getDotStyle(27)} />
+      <circle cx="24" cy="31" r="2.3" style={getDotStyle(31)} />
+      <circle cx="24" cy="35" r="2.3" style={getDotStyle(35)} />
     </svg>
   );
 
@@ -171,6 +163,8 @@ export const ScrollTop: React.FC<ScrollTopProps> = ({
       ref={buttonRef}
       style={buttonStyle}
       onClick={handleClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className={cn("afk-scroll-top", className)}
       aria-label="Scroll to top"
       {...props}
@@ -232,7 +226,7 @@ export const ScrollTop: React.FC<ScrollTopProps> = ({
   );
 };
 
-// Internal utility class name joiner in case cn.ts is not fully imported
-function cn(...classes: (string | undefined | null | false)[]) {
+// Internal utility class name joiner in case cn.js is not fully imported
+function cn(...classes) {
   return classes.filter(Boolean).join(" ");
 }

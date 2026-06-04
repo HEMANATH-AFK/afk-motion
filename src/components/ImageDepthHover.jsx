@@ -1,41 +1,13 @@
-import React, { useRef, useEffect, HTMLAttributes } from "react";
+import React, { useRef, useEffect } from "react";
 import { useMousePosition } from "../hooks/useMousePosition";
 import { useSpringValue } from "../hooks/useSpring";
-
-export interface ImageLayer {
-  /** Source URL of the image layer */
-  src: string;
-  /** Movement offset multiplier. Lower numbers shift less (background), higher numbers shift more (foreground) */
-  depth: number;
-  /** Alternative image text description */
-  alt?: string;
-}
-
-export interface ImageDepthHoverProps extends HTMLAttributes<HTMLDivElement> {
-  /** Array of image layers (can be URLs or layer configs) */
-  layers: (string | ImageLayer)[];
-  /** Maximum parallax translation offset in pixels */
-  maxShift?: number;
-  /** Maximum tilt angle in degrees */
-  maxTilt?: number;
-  /** CSS 3D perspective distance */
-  perspective?: number;
-  /** Spring stiffness coefficient */
-  stiffness?: number;
-  /** Spring damping coefficient */
-  damping?: number;
-  /** Enable mouse spotlight glow overlay */
-  glow?: boolean;
-  /** Color of the spotlight glow overlay */
-  glowColor?: string;
-}
 
 /**
  * ImageDepthHover - Multi-layer 3D parallax hover card (Apple-TV style).
  * Displays stacked image layers that shift at different speeds based on mouse coordinates.
  * Operates entirely via springs and direct DOM style updates to ensure steady 60fps execution.
  */
-export const ImageDepthHover: React.FC<ImageDepthHoverProps> = ({
+export const ImageDepthHover = ({
   layers,
   maxShift = 25,
   maxTilt = 8,
@@ -49,14 +21,14 @@ export const ImageDepthHover: React.FC<ImageDepthHoverProps> = ({
   children,
   ...props
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef(null);
   const { onChange } = useMousePosition(containerRef);
 
   // Springs tracking normalized cursor location (-1.0 to 1.0)
   const normXSpring = useSpringValue(0, { stiffness, damping });
   const normYSpring = useSpringValue(0, { stiffness, damping });
 
-  const processedLayers: ImageLayer[] = layers.map((layer, index) => {
+  const processedLayers = layers.map((layer, index) => {
     if (typeof layer === "string") {
       // Auto-assign depth layer weights. 
       // Background layers shift less, foreground layers shift more.
@@ -71,9 +43,9 @@ export const ImageDepthHover: React.FC<ImageDepthHoverProps> = ({
     const container = containerRef.current;
     if (!container) return;
 
-    const layerElements = container.querySelectorAll<HTMLImageElement>("[data-parallax-layer]");
+    const layerElements = container.querySelectorAll("[data-parallax-layer]");
 
-    const updateTransforms = (nx: number, ny: number) => {
+    const updateTransforms = (nx, ny) => {
       // Rotate the overall card slightly to match the perspective angle
       const rx = -ny * maxTilt;
       const ry = nx * maxTilt;
@@ -132,7 +104,7 @@ export const ImageDepthHover: React.FC<ImageDepthHoverProps> = ({
     });
   }, [onChange, normXSpring, normYSpring]);
 
-  const baseStyle: React.CSSProperties = {
+  const baseStyle = {
     position: "relative",
     overflow: "hidden",
     transformStyle: "preserve-3d",

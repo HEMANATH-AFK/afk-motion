@@ -1,26 +1,20 @@
-import { useState, useEffect, useRef, RefObject } from "react";
-
-export interface ScrollProgress {
-  scrollY: number; // Current vertical scroll position in pixels
-  scrollProgress: number; // Global page scroll progress (0.0 to 1.0)
-  elementProgress: number; // Scroll progress of a specific element relative to the viewport (0.0 when top enters bottom, 1.0 when bottom exits top)
-}
+import { useState, useEffect, useRef } from "react";
 
 /**
  * Tracks global or element-specific scroll progress.
  * Optimized with passive listeners and requestAnimationFrame to avoid layout thrashing.
  */
-export function useScrollProgress(ref?: RefObject<HTMLElement | null>) {
-  const [progress, setProgress] = useState<ScrollProgress>({
+export function useScrollProgress(ref) {
+  const [progress, setProgress] = useState({
     scrollY: 0,
     scrollProgress: 0,
     elementProgress: 0,
   });
 
-  const progressRef = useRef<ScrollProgress>(progress);
-  const listenersRef = useRef<Set<(prog: ScrollProgress) => void>>(new Set());
+  const progressRef = useRef(progress);
+  const listenersRef = useRef(new Set());
 
-  const onChange = (callback: (prog: ScrollProgress) => void) => {
+  const onChange = (callback) => {
     listenersRef.current.add(callback);
     return () => {
       listenersRef.current.delete(callback);
@@ -28,7 +22,7 @@ export function useScrollProgress(ref?: RefObject<HTMLElement | null>) {
   };
 
   useEffect(() => {
-    let rAFId: number;
+    let rAFId;
 
     const handleScroll = () => {
       cancelAnimationFrame(rAFId);
@@ -52,7 +46,7 @@ export function useScrollProgress(ref?: RefObject<HTMLElement | null>) {
           elementProgress = Math.max(0, Math.min(1, currentDistance / totalDistance));
         }
 
-        const nextProg: ScrollProgress = {
+        const nextProg = {
           scrollY,
           scrollProgress,
           elementProgress,

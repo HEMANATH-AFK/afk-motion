@@ -1,21 +1,11 @@
-import { useState, useEffect, useRef, RefObject } from "react";
-
-export interface MousePosition {
-  x: number; // Client X
-  y: number; // Client Y
-  elementX: number; // Mouse X relative to target element left boundary
-  elementY: number; // Mouse Y relative to target element top boundary
-  centerX: number; // Mouse X relative to target element center
-  centerY: number; // Mouse Y relative to target element center
-  isHovered: boolean;
-}
+import { useState, useEffect, useRef } from "react";
 
 /**
  * Tracks mouse position relative to a target element or window.
  * Provides both standard state updates and a listener callback model for high-performance direct DOM updates.
  */
-export function useMousePosition(ref?: RefObject<HTMLElement | null>) {
-  const [position, setPosition] = useState<MousePosition>({
+export function useMousePosition(ref) {
+  const [position, setPosition] = useState({
     x: 0,
     y: 0,
     elementX: 0,
@@ -25,10 +15,10 @@ export function useMousePosition(ref?: RefObject<HTMLElement | null>) {
     isHovered: false,
   });
 
-  const positionRef = useRef<MousePosition>(position);
-  const listenersRef = useRef<Set<(pos: MousePosition) => void>>(new Set());
+  const positionRef = useRef(position);
+  const listenersRef = useRef(new Set());
 
-  const onChange = (callback: (pos: MousePosition) => void) => {
+  const onChange = (callback) => {
     listenersRef.current.add(callback);
     return () => {
       listenersRef.current.delete(callback);
@@ -36,7 +26,7 @@ export function useMousePosition(ref?: RefObject<HTMLElement | null>) {
   };
 
   useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
+    const handleMouseMove = (event) => {
       const { clientX, clientY } = event;
       let elementX = 0;
       let elementY = 0;
@@ -62,7 +52,7 @@ export function useMousePosition(ref?: RefObject<HTMLElement | null>) {
         isHovered = true;
       }
 
-      const nextPos: MousePosition = {
+      const nextPos = {
         x: clientX,
         y: clientY,
         elementX,
@@ -78,7 +68,7 @@ export function useMousePosition(ref?: RefObject<HTMLElement | null>) {
     };
 
     const handleMouseLeave = () => {
-      const nextPos: MousePosition = {
+      const nextPos = {
         x: positionRef.current.x,
         y: positionRef.current.y,
         elementX: 0,

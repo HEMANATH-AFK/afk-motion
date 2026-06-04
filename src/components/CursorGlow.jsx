@@ -1,22 +1,5 @@
-import React, { useRef, useEffect, HTMLAttributes } from "react";
+import React, { useRef, useEffect } from "react";
 import { useSpringValue } from "../hooks/useSpring";
-
-export interface CursorGlowProps extends HTMLAttributes<HTMLDivElement> {
-  /** Size of the glow blob in pixels (default: 300) */
-  size?: number;
-  /** Color of the radial gradient glow */
-  color?: string;
-  /** Blur filter strength in pixels (default: 60) */
-  blur?: number;
-  /** If true, tracks global window. If false, tracks its parent container (default: false) */
-  global?: boolean;
-  /** Scale factor of the glow blob when hovering interactive elements (buttons, links) */
-  hoverScale?: number;
-  /** Spring stiffness */
-  stiffness?: number;
-  /** Spring damping */
-  damping?: number;
-}
 
 /**
  * CursorGlow - Responsive cursor follower glow spotlight.
@@ -24,7 +7,7 @@ export interface CursorGlowProps extends HTMLAttributes<HTMLDivElement> {
  * Expands dynamically when the mouse hovers over interactive elements.
  * Runs on direct DOM transforms and spring loops for maximum performance (60fps).
  */
-export const CursorGlow: React.FC<CursorGlowProps> = ({
+export const CursorGlow = ({
   size = 300,
   color = "rgba(99, 102, 241, 0.15)",
   blur = 60,
@@ -36,7 +19,7 @@ export const CursorGlow: React.FC<CursorGlowProps> = ({
   className,
   ...props
 }) => {
-  const glowRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef(null);
 
   // Spring values for coordinates and scaling
   const xSpring = useSpringValue(0, { stiffness, damping });
@@ -65,9 +48,8 @@ export const CursorGlow: React.FC<CursorGlowProps> = ({
       scaleSpring.onChange(updateStyle),
     ];
 
-    const handleMouseMove = (e: Event) => {
-      const mouseEvent = e as MouseEvent;
-      const { clientX, clientY } = mouseEvent;
+    const handleMouseMove = (e) => {
+      const { clientX, clientY } = e;
 
       if (global) {
         // Global coordinates centered on cursor
@@ -86,8 +68,8 @@ export const CursorGlow: React.FC<CursorGlowProps> = ({
     };
 
     // Detect interactions to scale glow
-    const handleMouseOver = (e: MouseEvent) => {
-      const targetEl = e.target as HTMLElement | null;
+    const handleMouseOver = (e) => {
+      const targetEl = e.target;
       if (targetEl && targetEl.closest("button, a, [data-interactive]")) {
         scaleSpring.set(hoverScale);
       } else {
@@ -152,7 +134,7 @@ export const CursorGlow: React.FC<CursorGlowProps> = ({
     };
   }, [global, size, hoverScale, xSpring, ySpring, scaleSpring]);
 
-  const glowStyle: React.CSSProperties = {
+  const glowStyle = {
     position: global ? "fixed" : "absolute",
     top: 0,
     left: 0,

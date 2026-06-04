@@ -1,22 +1,14 @@
-import { RefObject, useEffect } from "react";
+import { useEffect } from "react";
 import { useMousePosition } from "./useMousePosition";
 import { useSpringValue } from "./useSpring";
-
-export interface TiltOptions {
-  maxTilt?: number;
-  scale?: number;
-  perspective?: number;
-  stiffness?: number;
-  damping?: number;
-}
 
 /**
  * Calculates 3D tilt, scale, spotlight (glow) positions, and shadow displacement.
  * Integrates directly with our spring values to avoid component re-renders.
  */
 export function useTilt(
-  ref: RefObject<HTMLElement | null>,
-  options: TiltOptions = {}
+  ref,
+  options = {}
 ) {
   const {
     maxTilt = 15,

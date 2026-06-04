@@ -1,30 +1,23 @@
 import { useRef, useEffect, useCallback, useState } from "react";
 
-export interface SpringConfig {
-  stiffness?: number;
-  damping?: number;
-  mass?: number;
-  precision?: number;
-}
-
 /**
  * A ultra-high-performance spring value hook that bypasses React re-renders.
  * It animates an internal value using requestAnimationFrame and exposes a listener pattern
  * so elements can update their styles directly in the DOM.
  */
 export function useSpringValue(
-  initialValue: number,
-  config: SpringConfig = {}
+  initialValue,
+  config = {}
 ) {
   const { stiffness = 120, damping = 14, mass = 1, precision = 0.001 } = config;
 
   const currentRef = useRef(initialValue);
   const targetRef = useRef(initialValue);
   const velocityRef = useRef(0);
-  const listenersRef = useRef<Set<(val: number) => void>>(new Set());
+  const listenersRef = useRef(new Set());
 
   const animate = useCallback(() => {
-    let rAFId: number;
+    let rAFId;
 
     const tick = () => {
       const current = currentRef.current;
@@ -62,10 +55,10 @@ export function useSpringValue(
     return () => cancelAnimationFrame(rAFId);
   }, [stiffness, damping, mass, precision]);
 
-  const activeAnimationCleanup = useRef<(() => void) | null>(null);
+  const activeAnimationCleanup = useRef(null);
 
   const setTarget = useCallback(
-    (newTarget: number) => {
+    (newTarget) => {
       if (targetRef.current === newTarget) return;
       targetRef.current = newTarget;
       if (activeAnimationCleanup.current) {
@@ -76,7 +69,7 @@ export function useSpringValue(
     [animate]
   );
 
-  const onChange = useCallback((callback: (val: number) => void) => {
+  const onChange = useCallback((callback) => {
     listenersRef.current.add(callback);
     return () => {
       listenersRef.current.delete(callback);
@@ -103,8 +96,8 @@ export function useSpringValue(
  * re-renders upon value change (e.g., text values, inline style changes that React controls).
  */
 export function useSpring(
-  targetValue: number,
-  config: SpringConfig = {}
+  targetValue,
+  config = {}
 ) {
   const [val, setVal] = useState(targetValue);
   const spring = useSpringValue(targetValue, config);
