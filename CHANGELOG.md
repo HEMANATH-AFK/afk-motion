@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/HEMANATH-AFK/afk-motion/compare/v1.1.0...v1.2.0) (2026-06-07)
+
+
+### Features
+
+* initialize component library with extensive animation and UI primitives, including supporting documentation and example showcase ([7ce1a37](https://github.com/HEMANATH-AFK/afk-motion/commit/7ce1a37b465334f2647a83e080d3a71b6241d6b7))
+
 # [1.1.0](https://github.com/HEMANATH-AFK/afk-motion/compare/v1.0.0...v1.1.0) (2026-06-04)
 
 
