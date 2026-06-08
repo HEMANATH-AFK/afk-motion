@@ -188,9 +188,9 @@ export const ThreeDRotatingGallery = ThreeDCarousel;
 
 // 6. ThreeDProductShowcase (Layered exploded view)
 export const ThreeDProductShowcase = ({ title = "Product Explorer", layers = [
-  <div key={1} style={{ width: "100px", height: "100px", borderRadius: "12px", background: "rgba(99, 102, 241, 0.35)", border: "1px solid rgba(99, 102, 241, 0.6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "10px" }}>Base Layer</div>,
-  <div key={2} style={{ width: "80px", height: "80px", borderRadius: "10px", background: "rgba(192, 132, 252, 0.35)", border: "1px solid rgba(192, 132, 252, 0.6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "10px" }}>Core Chip</div>,
-  <div key={3} style={{ width: "60px", height: "60px", borderRadius: "8px", background: "rgba(244, 63, 94, 0.35)", border: "1px solid rgba(244, 63, 94, 0.6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "10px" }}>Heatsink</div>
+  <div key={1} style={{ width: "100px", height: "100px", borderRadius: "12px", background: "rgba(99, 102, 241, 0.35)", border: "1px solid rgba(99, 102, 241, 0.6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "10px", fontWeight: "bold" }}>Base Layer</div>,
+  <div key={2} style={{ width: "80px", height: "80px", borderRadius: "10px", background: "rgba(192, 132, 252, 0.35)", border: "1px solid rgba(192, 132, 252, 0.6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "10px", fontWeight: "bold" }}>Core Chip</div>,
+  <div key={3} style={{ width: "60px", height: "60px", borderRadius: "8px", background: "rgba(244, 63, 94, 0.35)", border: "1px solid rgba(244, 63, 94, 0.6)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "10px", fontWeight: "bold" }}>Heatsink</div>
 ], style, ...props }) => {
   const [hovered, setHovered] = useState(false);
   return (
@@ -215,13 +215,24 @@ export const ThreeDProductShowcase = ({ title = "Product Explorer", layers = [
       }}
       {...props}
     >
-      <h4 style={{ margin: 0, fontSize: "1.1rem" }}>{title}</h4>
-      <div style={{ position: "relative", height: "160px", transformStyle: "preserve-3d", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <h4 style={{ margin: 0, fontSize: "1.1rem", color: "#fff" }}>{title}</h4>
+      <div 
+        style={{ 
+          position: "relative", 
+          height: "160px", 
+          transformStyle: "preserve-3d", 
+          display: "flex", 
+          alignItems: "center", 
+          justifyContent: "center",
+          transform: "rotateX(60deg) rotateZ(-45deg)",
+          transition: "transform 0.4s ease-out"
+        }}
+      >
         {layers.map((layer, idx) => (
           <motion.div
             key={idx}
             animate={{
-              z: hovered ? idx * 40 : idx * 10,
+              z: hovered ? idx * 45 : idx * 12,
               opacity: hovered ? 1 - idx * 0.15 : 0.8
             }}
             transition={{ type: "spring", stiffness: 220, damping: 15 }}

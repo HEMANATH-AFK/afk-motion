@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 // 1. Spinner
@@ -305,16 +305,22 @@ export const MatrixLoader = ({ style, ...props }) => {
 };
 
 // 14. TerminalLoader
-export const TerminalLoader = ({ style, ...props }) => {
-  const [lines, setLines] = useState(["$ initialising..."]);
-  const steps = [
+export const TerminalLoader = ({ 
+  title = "bash - install",
+  steps = [
     "$ afk-motion --install",
     "Fetching dependencies...",
     "Injecting physics springs...",
     "Compilation success! Ready."
-  ];
+  ], 
+  style, 
+  ...props 
+}) => {
+  const [lines, setLines] = useState(["$ initialising..."]);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
+    setLines(["$ initialising..."]);
     let index = 0;
     const interval = setInterval(() => {
       if (index < steps.length) {
@@ -323,41 +329,61 @@ export const TerminalLoader = ({ style, ...props }) => {
       } else {
         clearInterval(interval);
       }
-    }, 1200);
+    }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [steps]);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [lines]);
 
   return (
     <div
       style={{
-        fontFamily: "monospace",
+        fontFamily: "'JetBrains Mono', monospace",
         background: "#08080c",
         border: "1px solid rgba(255,255,255,0.08)",
         borderRadius: "10px",
         padding: "14px",
-        width: "250px",
-        height: "140px",
+        width: "280px",
+        height: "160px",
         color: "#cbd5e1",
-        fontSize: "0.8rem",
+        fontSize: "0.78rem",
         display: "flex",
         flexDirection: "column",
-        gap: "4px",
         textAlign: "left",
         ...style
       }}
       {...props}
     >
-      <div style={{ display: "flex", gap: "5px", marginBottom: "8px" }}>
-        <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ff5f56" }} />
-        <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ffbd2e" }} />
-        <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#27c93f" }} />
-      </div>
-      {lines.map((l, i) => (
-        <div key={i} style={{ color: l.startsWith("$") ? "#818cf8" : "#94a3b8" }}>
-          {l}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px", borderBottom: "1px solid rgba(255,255,255,0.04)", paddingBottom: "6px" }}>
+        <div style={{ display: "flex", gap: "5px" }}>
+          <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ff5f56" }} />
+          <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ffbd2e" }} />
+          <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#27c93f" }} />
         </div>
-      ))}
+        <span style={{ fontSize: "0.65rem", color: "#64748b", flex: 1, textAlign: "center", fontFamily: "sans-serif" }}>{title}</span>
+      </div>
+      <div 
+        ref={scrollRef}
+        style={{ 
+          flex: 1, 
+          overflowY: "auto", 
+          display: "flex", 
+          flexDirection: "column", 
+          gap: "4px",
+          scrollbarWidth: "none"
+        }}
+      >
+        {lines.map((l, i) => (
+          <div key={i} style={{ color: l.startsWith("$") ? "#818cf8" : "#94a3b8", whiteSpace: "pre-wrap" }}>
+            {l}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

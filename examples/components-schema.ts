@@ -237,9 +237,47 @@ export const componentsSchema: Record<string, ComponentSchemaItem[]> = {
     { name: "Ripple Button", importName: "RippleButton", category: "buttons" },
     { name: "Glow Button", importName: "GlowButton", category: "buttons" },
     { name: "Liquid Button", importName: "LiquidButton", category: "buttons" },
-    { name: "Morph Button", importName: "MorphButton", category: "buttons" },
-    { name: "Success Button", importName: "SuccessButton", category: "buttons" },
-    { name: "Progress Button", importName: "ProgressButton", category: "buttons" },
+    {
+      name: "Morph Button",
+      importName: "MorphButton",
+      category: "buttons",
+      description: "Interactive button morphing into completely different shape/color states on click.",
+      tags: ["button", "morph", "spring"],
+      props: [
+        { name: "morphColor", type: "color", default: "#10b981", description: "Color after morph animation finishes" },
+        { name: "defaultText", type: "string", default: "Download File", description: "Default button label" },
+        { name: "activeText", type: "string", default: "Success!", description: "Label shown after morphing completes" }
+      ],
+      usageCode: (props) => `import { MorphButton } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <MorphButton morphColor="${props.morphColor}" defaultText="${props.defaultText}" activeText="${props.activeText}" />\n  );\n}`
+    },
+    {
+      name: "Success Button",
+      importName: "SuccessButton",
+      category: "buttons",
+      description: "Submit button with integrated success state transition and check icon animation.",
+      tags: ["button", "success", "check"],
+      props: [
+        { name: "defaultColor", type: "color", default: "#6366f1", description: "Initial button background color" },
+        { name: "successColor", type: "color", default: "#10b981", description: "Success state background color" },
+        { name: "defaultText", type: "string", default: "Submit Data", description: "Default button label text" },
+        { name: "successText", type: "string", default: "Success!", description: "Success state label text" }
+      ],
+      usageCode: (props) => `import { SuccessButton } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <SuccessButton defaultColor="${props.defaultColor}" successColor="${props.successColor}" defaultText="${props.defaultText}" successText="${props.successText}" />\n  );\n}`
+    },
+    {
+      name: "Progress Button",
+      importName: "ProgressButton",
+      category: "buttons",
+      description: "Action button containing an integrated progress loading bar indicator overlay.",
+      tags: ["button", "progress", "loading"],
+      props: [
+        { name: "progressColor", type: "color", default: "#3b82f6", description: "Active progress loading indicator color" },
+        { name: "defaultText", type: "string", default: "Start Upload", description: "Default button text" },
+        { name: "activeText", type: "string", default: "Uploading...", description: "Active progress state text" },
+        { name: "duration", type: "number", default: 2000, min: 500, max: 8000, step: 100, description: "Simulation loading duration (ms)" }
+      ],
+      usageCode: (props) => `import { ProgressButton } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <ProgressButton progressColor="${props.progressColor}" defaultText="${props.defaultText}" activeText="${props.activeText}" duration={${props.duration}} />\n  );\n}`
+    },
     { name: "Gradient Button", importName: "GradientButton", category: "buttons" },
     { name: "Shiny Button", importName: "ShinyButton", category: "buttons" },
     { name: "Pulse Button", importName: "PulseButton", category: "buttons" },
@@ -324,6 +362,21 @@ export const componentsSchema: Record<string, ComponentSchemaItem[]> = {
       performanceNotes: "Extremely optimized, utilizes window scroll events bound directly to React hooks.",
       browserSupport: "Fully supported on all viewport scrolling engines."
     },
+    {
+      name: "Scroll Top",
+      importName: "ScrollTop",
+      category: "scroll",
+      description: "Smooth scroll-to-top floating or full-width button with circular, minimal, percentage, linear, square, or glow progress indicators.",
+      tags: ["scroll", "top", "navigation"],
+      props: [
+        { name: "variant", type: "select", default: "circle", options: ["circle", "minimal", "percentage", "linear", "dotted", "square", "glow"], description: "Visual variant style" },
+        { name: "size", type: "number", default: 60, min: 40, max: 100, step: 5, description: "Button diameter (px)" },
+        { name: "threshold", type: "number", default: 300, min: 50, max: 1000, step: 50, description: "Scroll threshold to display button (px)" },
+        { name: "progressColor", type: "color", default: "#6366f1", description: "Progress active outline/bar color" },
+        { name: "glass", type: "boolean", default: true, description: "Enable glassmorphism styling" }
+      ],
+      usageCode: (props) => `import { ScrollTop } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <ScrollTop variant="${props.variant}" size={${props.size}} threshold={${props.threshold}} progressColor="${props.progressColor}" glass={${props.glass}} />\n  );\n}`
+    },
     { name: "Scroll Reveal", importName: "ScrollReveal", category: "scroll" },
     { name: "Scroll Fade", importName: "ScrollFade", category: "scroll" },
     { name: "Scroll Scale", importName: "ScrollScale", category: "scroll" },
@@ -383,14 +436,66 @@ export const componentsSchema: Record<string, ComponentSchemaItem[]> = {
       browserSupport: "Compatible with modern layout-id configurations."
     },
     { name: "Floating Navbar", importName: "FloatingNavbar", category: "navigation" },
-    { name: "Hide On Scroll Navbar", importName: "HideOnScrollNavbar", category: "navigation" },
-    { name: "Morph Navbar", importName: "MorphNavbar", category: "navigation" },
+    {
+      name: "Hide On Scroll Navbar",
+      importName: "HideOnScrollNavbar",
+      category: "navigation",
+      description: "Navbar that collapses when scrolling down and reveals when scrolling up. Supports custom inline container mode.",
+      tags: ["nav", "scroll", "hide"],
+      props: [
+        { name: "glass", type: "boolean", default: true, description: "Apply glassmorphism background" },
+        { name: "threshold", type: "number", default: 80, min: 20, max: 400, step: 10, description: "Scroll threshold in pixels before hiding" }
+      ],
+      usageCode: (props) => `import { HideOnScrollNavbar } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <HideOnScrollNavbar glass={${props.glass}} threshold={${props.threshold}}>\n      <div style={{ display: "flex", gap: "20px" }}>\n        <span>Logo</span>\n        <span>Dashboard</span>\n        <span>Settings</span>\n      </div>\n    </HideOnScrollNavbar>\n  );\n}`
+    },
+    {
+      name: "Morph Navbar",
+      importName: "MorphNavbar",
+      category: "navigation",
+      description: "Elegant navbar menu expanding into submenu panels on trigger clicks.",
+      tags: ["nav", "morph", "click"],
+      props: [
+        { name: "activeColor", type: "color", default: "#6366f1", description: "Active indicator highlight color" },
+        { name: "items", type: "select", default: "Overview,Pricing,About", options: ["Overview,Pricing,About", "Profile,Settings,Billing,Logout"], description: "Menu links list separated by commas" }
+      ],
+      usageCode: (props) => {
+        const arr = typeof props.items === "string" ? props.items.split(",") : props.items;
+        return `import { MorphNavbar } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <MorphNavbar activeColor="${props.activeColor}" items={${JSON.stringify(arr)}} />\n  );\n}`;
+      }
+    },
     { name: "Sidebar Menu", importName: "SidebarMenu", category: "navigation" },
     { name: "Slide Menu", importName: "SlideMenu", category: "navigation" },
     { name: "Mobile Drawer", importName: "MobileDrawer", category: "navigation" },
     { name: "Mega Menu", importName: "MegaMenu", category: "navigation" },
-    { name: "Circular Menu", importName: "CircularMenu", category: "navigation" },
-    { name: "Dock Menu", importName: "DockMenu", category: "navigation" }
+    {
+      name: "Circular Menu",
+      importName: "CircularMenu",
+      category: "navigation",
+      description: "Radial circular menu revealing menu items surrounding a central trigger button on click.",
+      tags: ["nav", "circular", "radial"],
+      props: [
+        { name: "items", type: "select", default: "Home,Works,Contact", options: ["Home,Works,Contact", "Search,Settings,About,Log", "Share,Like,Bookmark,Save,Delete"], description: "Menu labels separated by commas" },
+        { name: "radius", type: "number", default: 80, min: 50, max: 150, step: 10, description: "Radius distance of items from center (px)" }
+      ],
+      usageCode: (props) => {
+        const arr = typeof props.items === "string" ? props.items.split(",") : props.items;
+        return `import { CircularMenu } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <CircularMenu items={${JSON.stringify(arr)}} radius={${props.radius}} />\n  );\n}`;
+      }
+    },
+    {
+      name: "Dock Menu",
+      importName: "DockMenu",
+      category: "navigation",
+      description: "macOS styled dock showing magnification effects on mouse hover proximity.",
+      tags: ["nav", "dock", "magnify"],
+      props: [
+        { name: "items", type: "select", default: "Home,Works,Contact", options: ["Home,Works,Contact", "Overview,Sprints,API,Docs", "Details,Settings"], description: "Menu labels separated by commas" }
+      ],
+      usageCode: (props) => {
+        const arr = typeof props.items === "string" ? props.items.split(",") : props.items;
+        return `import { DockMenu } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <DockMenu items={${JSON.stringify(arr)}} />\n  );\n}`;
+      }
+    }
   ],
   backgrounds: [
     {
@@ -488,10 +593,43 @@ export const componentsSchema: Record<string, ComponentSchemaItem[]> = {
       browserSupport: "Compatible with mobile and desktop browsers."
     },
     { name: "Animated Input", importName: "AnimatedInput", category: "forms" },
-    { name: "Floating Label Input", importName: "FloatingLabelInput", category: "forms" },
-    { name: "Password Strength Input", importName: "PasswordStrengthInput", category: "forms" },
+    {
+      name: "Floating Label Input",
+      importName: "FloatingLabelInput",
+      category: "forms",
+      description: "Beautiful form input field where label animatedly floats upward upon typing or focus.",
+      tags: ["form", "input", "float"],
+      props: [
+        { name: "label", type: "string", default: "Email Address", description: "Placeholder label" }
+      ],
+      usageCode: (props) => `import { FloatingLabelInput } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <FloatingLabelInput label="${props.label}" />\n  );\n}`
+    },
+    {
+      name: "Password Strength Input",
+      importName: "PasswordStrengthInput",
+      category: "forms",
+      description: "Interactive input field that dynamically estimates password security strength via spring indicators.",
+      tags: ["form", "password", "security"],
+      props: [
+        { name: "label", type: "string", default: "Enter Secure Password", description: "Placeholder label" }
+      ],
+      usageCode: (props) => `import { PasswordStrengthInput } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <PasswordStrengthInput label="${props.label}" />\n  );\n}`
+    },
     { name: "Search Input", importName: "SearchInput", category: "forms" },
-    { name: "Auto Complete Input", importName: "AutoCompleteInput", category: "forms" },
+    {
+      name: "Auto Complete Input",
+      importName: "AutoCompleteInput",
+      category: "forms",
+      description: "Search input suggesting matches interactively on search query entry.",
+      tags: ["form", "autocomplete", "suggestions"],
+      props: [
+        { name: "suggestions", type: "select", default: "React,Framer Motion,Tailwind CSS,Vite,Next.js", options: ["React,Framer Motion,Tailwind CSS,Vite,Next.js", "Chrome Devtools,Gemini Agent,DeepMind"], description: "Dropdown values separated by commas" }
+      ],
+      usageCode: (props) => {
+        const arr = typeof props.suggestions === "string" ? props.suggestions.split(",") : props.suggestions;
+        return `import { AutoCompleteInput } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <AutoCompleteInput suggestions={${JSON.stringify(arr)}} />\n  );\n}`;
+      }
+    },
     { name: "Animated Checkbox", importName: "AnimatedCheckbox", category: "forms" },
     { name: "Animated Radio", importName: "AnimatedRadio", category: "forms" },
     { name: "Toggle Switch", importName: "ToggleSwitch", category: "forms" },
@@ -538,12 +676,46 @@ export const componentsSchema: Record<string, ComponentSchemaItem[]> = {
       performanceNotes: "Optimized drawing layers using translateZ coordinates.",
       browserSupport: "Requires robust CSS 3D rendering engine support."
     },
-    { name: "ThreeD Tilt", importName: "ThreeDTilt", category: "3d" },
+    {
+      name: "ThreeD Tilt",
+      importName: "ThreeDTilt",
+      category: "3d",
+      description: "Stunning 3D tilt interaction mapping cursor hover coordinates to 3D rotation angles.",
+      tags: ["3d", "tilt", "perspective"],
+      props: [
+        { name: "maxTilt", type: "number", default: 20, min: 5, max: 45, step: 1, description: "Maximum rotation angle (degrees)" },
+        { name: "perspective", type: "number", default: 1000, min: 500, max: 2000, step: 100, description: "3D perspective viewport distance" }
+      ],
+      usageCode: (props) => `import { ThreeDTilt } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <ThreeDTilt maxTilt={${props.maxTilt}} perspective={${props.perspective}}>\n      <div style={{ padding: "30px", background: "rgba(255,255,255,0.05)", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)" }}>\n        <h3>Hover 3D Tilt</h3>\n      </div>\n    </ThreeDTilt>\n  );\n}`
+    },
     { name: "ThreeD Flip", importName: "ThreeDFlip", category: "3d" },
-    { name: "ThreeD Stack Cards", importName: "ThreeDStackCards", category: "3d" },
+    {
+      name: "ThreeD Stack Cards",
+      importName: "ThreeDStackCards",
+      category: "3d",
+      description: "Staggered 3D stacked layout revealing layers dynamically on scroll or hover.",
+      tags: ["3d", "stack", "cards"],
+      props: [
+        { name: "count", type: "number", default: 3, min: 2, max: 5, step: 1, description: "Number of cards in the stack" }
+      ],
+      usageCode: (props) => `import { ThreeDStackCards } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <ThreeDStackCards count={${props.count}} />\n  );\n}`
+    },
     { name: "ThreeD Carousel", importName: "ThreeDCarousel", category: "3d" },
     { name: "ThreeD Rotating Gallery", importName: "ThreeDRotatingGallery", category: "3d" },
-    { name: "ThreeD Product Showcase", importName: "ThreeDProductShowcase", category: "3d" }
+    {
+      name: "ThreeD Product Showcase",
+      importName: "ThreeDProductShowcase",
+      category: "3d",
+      description: "Exploded 3D layer layout perfect for showcasing detailed device/product components.",
+      tags: ["3d", "product", "exploded"],
+      props: [
+        { name: "title", type: "string", default: "Premium Gadget V2", description: "Showcase product title" },
+        { name: "price", type: "string", default: "$399", description: "Product price label" },
+        { name: "tiltX", type: "number", default: 60, min: 30, max: 90, step: 5, description: "Base tilt angle X" },
+        { name: "tiltZ", type: "number", default: -45, min: -90, max: 0, step: 5, description: "Base tilt angle Z" }
+      ],
+      usageCode: (props) => `import { ThreeDProductShowcase } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <ThreeDProductShowcase title="${props.title}" price="${props.price}" tiltX={${props.tiltX}} tiltZ={${props.tiltZ}} />\n  );\n}`
+    }
   ],
   dashboard: [
     {
@@ -586,10 +758,41 @@ export const componentsSchema: Record<string, ComponentSchemaItem[]> = {
       browserSupport: "Universal compatibility."
     },
     { name: "Spotlight", importName: "Spotlight", category: "advanced" },
-    { name: "Command Palette", importName: "CommandPalette", category: "advanced" },
+    {
+      name: "Command Palette",
+      importName: "CommandPalette",
+      category: "advanced",
+      description: "Keyboard-accessible command palette overlay menu.",
+      tags: ["advanced", "palette", "keyboard"],
+      props: [
+        { name: "placeholder", type: "string", default: "Search commands...", description: "Search input placeholder" },
+        { name: "shortcut", type: "string", default: "⌘K", description: "Shortcut indicator label text" }
+      ],
+      usageCode: (props) => `import { CommandPalette } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <CommandPalette placeholder="${props.placeholder}" shortcut="${props.shortcut}" />\n  );\n}`
+    },
     { name: "Animated Code Block", importName: "AnimatedCodeBlock", category: "advanced" },
-    { name: "Interactive Timeline", importName: "InteractiveTimeline", category: "advanced" },
-    { name: "Stepper", importName: "Stepper", category: "advanced" },
+    {
+      name: "Interactive Timeline",
+      importName: "InteractiveTimeline",
+      category: "advanced",
+      description: "A dynamic layout representing chronological milestones with interactive checks.",
+      tags: ["advanced", "timeline", "milestones"],
+      props: [
+        { name: "color", type: "color", default: "#6366f1", description: "Milestone active line/ring color" }
+      ],
+      usageCode: (props) => `import { InteractiveTimeline } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <InteractiveTimeline color="${props.color}" />\n  );\n}`
+    },
+    {
+      name: "Stepper",
+      importName: "Stepper",
+      category: "advanced",
+      description: "Wizard component guiding users through sequential multi-step processes.",
+      tags: ["advanced", "stepper", "wizard"],
+      props: [
+        { name: "stepsCount", type: "number", default: 4, min: 2, max: 6, step: 1, description: "Total steps count" }
+      ],
+      usageCode: (props) => `import { Stepper } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <Stepper stepsCount={${props.stepsCount}} />\n  );\n}`
+    },
     { name: "Feature Showcase", importName: "FeatureShowcase", category: "advanced" },
     { name: "Bento Grid", importName: "BentoGrid", category: "advanced" },
     { name: "Infinite Logo Cloud", importName: "InfiniteLogoCloud", category: "advanced" },
@@ -598,7 +801,18 @@ export const componentsSchema: Record<string, ComponentSchemaItem[]> = {
     { name: "Animated FAQ", importName: "AnimatedFAQ", category: "advanced" },
     { name: "Comparison Slider", importName: "ComparisonSlider", category: "advanced" },
     { name: "Before After Image", importName: "BeforeAfterImage", category: "advanced" },
-    { name: "Pricing Switcher", importName: "PricingSwitcher", category: "advanced" },
+    {
+      name: "Pricing Switcher",
+      importName: "PricingSwitcher",
+      category: "advanced",
+      description: "Pricing plans switcher widget containing annual discounts.",
+      tags: ["advanced", "pricing", "switcher"],
+      props: [
+        { name: "monthlyPrice", type: "number", default: 19, min: 5, max: 200, step: 1, description: "Monthly price tier" },
+        { name: "yearlyPrice", type: "number", default: 15, min: 5, max: 200, step: 1, description: "Yearly price tier per month" }
+      ],
+      usageCode: (props) => `import { PricingSwitcher } from "@hemanath-afk/afk-motion";\n\nexport default function Example() {\n  return (\n    <PricingSwitcher monthlyPrice={${props.monthlyPrice}} yearlyPrice={${props.yearlyPrice}} />\n  );\n}`
+    },
     { name: "Calendar Heatmap", importName: "CalendarHeatmap", category: "advanced" }
   ],
   ai: [

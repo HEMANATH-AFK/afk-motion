@@ -176,25 +176,38 @@ export const LiquidButton = ({ children, style, ...props }) => {
 };
 
 // 7. MorphButton
-export const MorphButton = ({ children, activeChildren, isMorph = false, style, ...props }) => (
-  <motion.button
-    layout
-    style={{
-      ...baseStyles,
-      borderRadius: isMorph ? "30px" : "12px",
-      padding: isMorph ? "12px 18px" : "12px 24px",
-      background: isMorph ? "#c084fc" : "#0f0f16",
-      color: isMorph ? "#07070a" : "#fff",
-      ...style
-    }}
-    whileTap={{ scale: 0.95 }}
-    {...props}
-  >
-    <motion.span layout="position">
-      {isMorph ? activeChildren : children}
-    </motion.span>
-  </motion.button>
-);
+export const MorphButton = ({ children, activeChildren, isMorph: controlledIsMorph, onClick, style, ...props }) => {
+  const [localIsMorph, setLocalIsMorph] = useState(false);
+  const isMorph = controlledIsMorph !== undefined ? controlledIsMorph : localIsMorph;
+
+  const handleClick = (e) => {
+    if (controlledIsMorph === undefined) {
+      setLocalIsMorph(!localIsMorph);
+    }
+    if (onClick) onClick(e);
+  };
+
+  return (
+    <motion.button
+      layout
+      style={{
+        ...baseStyles,
+        borderRadius: isMorph ? "30px" : "12px",
+        padding: isMorph ? "12px 18px" : "12px 24px",
+        background: isMorph ? "#c084fc" : "#0f0f16",
+        color: isMorph ? "#07070a" : "#fff",
+        ...style
+      }}
+      onClick={handleClick}
+      whileTap={{ scale: 0.95 }}
+      {...props}
+    >
+      <motion.span layout="position">
+        {isMorph ? activeChildren : children}
+      </motion.span>
+    </motion.button>
+  );
+};
 
 // 8. LoadingButton
 export const LoadingButton = ({ children, isLoading = false, style, ...props }) => (
@@ -237,76 +250,111 @@ export const LoadingButton = ({ children, isLoading = false, style, ...props }) 
 );
 
 // 9. SuccessButton
-export const SuccessButton = ({ children, isSuccess = false, style, ...props }) => (
-  <motion.button
-    layout
-    whileTap={{ scale: 0.96 }}
-    style={{
-      ...baseStyles,
-      background: isSuccess ? "#10b981" : "#0f0f16",
-      borderColor: isSuccess ? "#10b981" : "rgba(255, 255, 255, 0.1)",
-      color: "#ffffff",
-      borderRadius: isSuccess ? "25px" : "12px",
-      ...style
-    }}
-    {...props}
-  >
-    <AnimatePresence mode="wait">
-      {isSuccess ? (
-        <motion.span
-          key="success"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.5 }}
-          style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-          Success
-        </motion.span>
-      ) : (
-        <motion.span
-          key="label"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          {children}
-        </motion.span>
-      )}
-    </AnimatePresence>
-  </motion.button>
-);
+export const SuccessButton = ({ children, isSuccess: controlledIsSuccess, onClick, style, ...props }) => {
+  const [localIsSuccess, setLocalIsSuccess] = useState(false);
+  const isSuccess = controlledIsSuccess !== undefined ? controlledIsSuccess : localIsSuccess;
+
+  const handleClick = (e) => {
+    if (controlledIsSuccess === undefined) {
+      setLocalIsSuccess(!localIsSuccess);
+    }
+    if (onClick) onClick(e);
+  };
+
+  return (
+    <motion.button
+      layout
+      onClick={handleClick}
+      whileTap={{ scale: 0.96 }}
+      style={{
+        ...baseStyles,
+        background: isSuccess ? "#10b981" : "#0f0f16",
+        borderColor: isSuccess ? "#10b981" : "rgba(255, 255, 255, 0.1)",
+        color: "#ffffff",
+        borderRadius: isSuccess ? "25px" : "12px",
+        ...style
+      }}
+      {...props}
+    >
+      <AnimatePresence mode="wait">
+        {isSuccess ? (
+          <motion.span
+            key="success"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Success
+          </motion.span>
+        ) : (
+          <motion.span
+            key="label"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {children}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </motion.button>
+  );
+};
 
 // 10. ProgressButton
-export const ProgressButton = ({ children, progress = 0, style, ...props }) => (
-  <button
-    style={{
-      ...baseStyles,
-      position: "relative",
-      overflow: "hidden",
-      ...style
-    }}
-    {...props}
-  >
-    <div
+export const ProgressButton = ({ children, progress: controlledProgress, onClick, style, ...props }) => {
+  const [localProgress, setLocalProgress] = useState(0);
+  const progress = controlledProgress !== undefined ? controlledProgress : localProgress;
+
+  const handleClick = (e) => {
+    if (controlledProgress === undefined) {
+      setLocalProgress(0);
+      let p = 0;
+      const interval = setInterval(() => {
+        p += 5;
+        if (p > 100) {
+          p = 100;
+          clearInterval(interval);
+        }
+        setLocalProgress(p);
+      }, 50);
+    }
+    if (onClick) onClick(e);
+  };
+
+  return (
+    <button
+      onClick={handleClick}
       style={{
-        position: "absolute",
-        left: 0,
-        top: 0,
-        height: "100%",
-        width: `${progress}%`,
-        backgroundColor: "rgba(99, 102, 241, 0.25)",
-        transition: "width 0.3s ease",
-        zIndex: 1
+        ...baseStyles,
+        position: "relative",
+        overflow: "hidden",
+        ...style
       }}
-    />
-    <span style={{ position: "relative", zIndex: 2 }}>
-      {children} {progress > 0 && `${progress}%`}
-    </span>
-  </button>
-);
+      {...props}
+    >
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          height: "100%",
+          width: `${progress}%`,
+          backgroundColor: "rgba(99, 102, 241, 0.25)",
+          transition: "width 0.1s linear",
+          zIndex: 1
+        }}
+      />
+      <span style={{ position: "relative", zIndex: 2 }}>
+        {children} {progress > 0 && `${progress}%`}
+      </span>
+    </button>
+  );
+};
 
 // 11. GradientButton
 export const GradientButton = ({ children, style, ...props }) => (

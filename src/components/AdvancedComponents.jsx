@@ -104,7 +104,7 @@ export const CommandPalette = ({ isOpen, onClose, items = [], onSelect, ...props
                 <div
                   key={idx}
                   onClick={() => {
-                    onSelect(item);
+                    onSelect && onSelect(item);
                     onClose();
                   }}
                   style={{ padding: "10px 14px", borderRadius: "8px", color: "#94a3b8", cursor: "pointer", fontSize: "0.9rem" }}
@@ -132,7 +132,12 @@ export const CommandPalette = ({ isOpen, onClose, items = [], onSelect, ...props
 };
 
 // 3. AnimatedCodeBlock
-export const AnimatedCodeBlock = ({ code, language = "javascript", style, ...props }) => {
+export const AnimatedCodeBlock = ({ 
+  code = `// Example AFK Spring Setup\nconst spring = {\n  type: \"spring\",\n  stiffness: 260,\n  damping: 15\n};`, 
+  language = "javascript", 
+  style, 
+  ...props 
+}) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -270,53 +275,104 @@ export const TerminalEmulator = ({ style, ...props }) => {
 };
 
 // 5. InteractiveTimeline
-export const InteractiveTimeline = ({ steps = [], style, ...props }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: "30px", position: "relative", ...style }} {...props}>
-    <div style={{ position: "absolute", left: "16px", top: "15px", bottom: "15px", width: "2px", backgroundColor: "rgba(255,255,255,0.05)" }} />
-    {steps.map((step, idx) => (
-      <motion.div
-        key={idx}
-        initial={{ opacity: 0, x: -10 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: idx * 0.1 }}
-        style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}
-      >
-        <div style={{ width: "34px", height: "34px", borderRadius: "50%", backgroundColor: "#0c0c14", border: "2px solid #6366f1", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", zIndex: 1 }}>
-          {idx + 1}
-        </div>
-        <div>
-          <span style={{ fontSize: "1rem", color: "#fff", fontWeight: 700 }}>{step.title}</span>
-          <p style={{ margin: "4px 0 0", color: "#94a3b8", fontSize: "0.85rem", lineHeight: 1.4 }}>{step.description}</p>
-        </div>
-      </motion.div>
-    ))}
-  </div>
-);
+export const InteractiveTimeline = ({ steps = [], activeStep, onStepClick, style, ...props }) => {
+  const [localActive, setLocalActive] = useState(0);
+  const currentActive = activeStep !== undefined ? activeStep : localActive;
+
+  const handleClick = (idx) => {
+    if (activeStep === undefined) {
+      setLocalActive(idx);
+    }
+    onStepClick && onStepClick(idx);
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "30px", position: "relative", ...style }} {...props}>
+      <div style={{ position: "absolute", left: "16px", top: "15px", bottom: "15px", width: "2px", backgroundColor: "rgba(255,255,255,0.05)" }} />
+      {steps.map((step, idx) => {
+        const isActive = currentActive === idx;
+        return (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: idx * 0.1 }}
+            onClick={() => handleClick(idx)}
+            style={{ display: "flex", gap: "20px", alignItems: "flex-start", cursor: "pointer" }}
+          >
+            <motion.div
+              animate={{
+                borderColor: isActive ? "#6366f1" : "rgba(255,255,255,0.15)",
+                backgroundColor: isActive ? "#6366f1" : "#0c0c14",
+                scale: isActive ? 1.1 : 1
+              }}
+              style={{
+                width: "34px",
+                height: "34px",
+                borderRadius: "50%",
+                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: "bold",
+                zIndex: 1,
+                border: "2px solid rgba(255,255,255,0.15)"
+              }}
+            >
+              {idx + 1}
+            </motion.div>
+            <div>
+              <span style={{ fontSize: "1rem", color: isActive ? "#fff" : "#cbd5e1", fontWeight: 700, transition: "color 0.2s" }}>{step.title}</span>
+              <p style={{ margin: "4px 0 0", color: isActive ? "#a5b4fc" : "#94a3b8", fontSize: "0.85rem", lineHeight: 1.4, transition: "color 0.2s" }}>{step.description}</p>
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+};
 
 // 6. Stepper (dots timeline indicator)
-export const Stepper = ({ steps = [], active = 0, style, ...props }) => (
-  <div style={{ display: "flex", alignItems: "center", gap: "10px", ...style }} {...props}>
-    {steps.map((step, i) => (
-      <React.Fragment key={i}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
-          <motion.div
-            animate={{
-              backgroundColor: active >= i ? "#6366f1" : "rgba(255,255,255,0.1)",
-              scale: active === i ? 1.25 : 1
-            }}
-            style={{ width: "24px", height: "24px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: "bold", color: "#fff" }}
+export const Stepper = ({ steps = [], active = 0, onStepClick, style, ...props }) => {
+  const [localActive, setLocalActive] = useState(active);
+  const currentActive = active !== undefined ? active : localActive;
+
+  useEffect(() => {
+    setLocalActive(active);
+  }, [active]);
+
+  const handleClick = (idx) => {
+    setLocalActive(idx);
+    onStepClick && onStepClick(idx);
+  };
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "10px", ...style }} {...props}>
+      {steps.map((step, i) => (
+        <React.Fragment key={i}>
+          <div 
+            onClick={() => handleClick(i)}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", cursor: "pointer" }}
           >
-            {i + 1}
-          </motion.div>
-        </div>
-        {i < steps.length - 1 && (
-          <div style={{ flex: 1, width: "40px", height: "2px", backgroundColor: active > i ? "#6366f1" : "rgba(255,255,255,0.08)" }} />
-        )}
-      </React.Fragment>
-    ))}
-  </div>
-);
+            <motion.div
+              animate={{
+                backgroundColor: currentActive >= i ? "#6366f1" : "rgba(255,255,255,0.1)",
+                scale: currentActive === i ? 1.25 : 1
+              }}
+              style={{ width: "24px", height: "24px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: "bold", color: "#fff" }}
+            >
+              {i + 1}
+            </motion.div>
+          </div>
+          {i < steps.length - 1 && (
+            <div style={{ flex: 1, width: "40px", height: "2px", backgroundColor: currentActive > i ? "#6366f1" : "rgba(255,255,255,0.08)" }} />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
 
 // 7. FeatureShowcase (Interactive tabs)
 export const FeatureShowcase = ({ features = [], style, ...props }) => {
@@ -587,40 +643,52 @@ export const ComparisonSlider = ({ beforeSrc, afterSrc, style, ...props }) => {
 export const BeforeAfterImage = ComparisonSlider;
 
 // 14. PricingSwitcher (Monthly/annual slider with bounce effect)
-export const PricingSwitcher = ({ isAnnual, onToggle, style, ...props }) => (
-  <div style={{ display: "inline-flex", alignItems: "center", gap: "10px", background: "rgba(255,255,255,0.02)", padding: "4px", borderRadius: "30px", border: "1px solid rgba(255,255,255,0.07)", ...style }} {...props}>
-    <button
-      onClick={() => onToggle(false)}
-      style={{
-        padding: "6px 14px",
-        borderRadius: "20px",
-        border: "none",
-        background: !isAnnual ? "#6366f1" : "transparent",
-        color: !isAnnual ? "#fff" : "#64748b",
-        fontWeight: 600,
-        cursor: "pointer",
-        transition: "all 0.2s"
-      }}
-    >
-      Monthly
-    </button>
-    <button
-      onClick={() => onToggle(true)}
-      style={{
-        padding: "6px 14px",
-        borderRadius: "20px",
-        border: "none",
-        background: isAnnual ? "#6366f1" : "transparent",
-        color: isAnnual ? "#fff" : "#64748b",
-        fontWeight: 600,
-        cursor: "pointer",
-        transition: "all 0.2s"
-      }}
-    >
-      Yearly
-    </button>
-  </div>
-);
+export const PricingSwitcher = ({ isAnnual: controlledIsAnnual, onToggle, style, ...props }) => {
+  const [localIsAnnual, setLocalIsAnnual] = useState(false);
+  const isAnnual = controlledIsAnnual !== undefined ? controlledIsAnnual : localIsAnnual;
+
+  const handleToggle = (val) => {
+    if (controlledIsAnnual === undefined) {
+      setLocalIsAnnual(val);
+    }
+    onToggle && onToggle(val);
+  };
+
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: "10px", background: "rgba(255,255,255,0.02)", padding: "4px", borderRadius: "30px", border: "1px solid rgba(255,255,255,0.07)", ...style }} {...props}>
+      <button
+        onClick={() => handleToggle(false)}
+        style={{
+          padding: "6px 14px",
+          borderRadius: "20px",
+          border: "none",
+          background: !isAnnual ? "#6366f1" : "transparent",
+          color: !isAnnual ? "#fff" : "#64748b",
+          fontWeight: 600,
+          cursor: "pointer",
+          transition: "all 0.2s"
+        }}
+      >
+        Monthly
+      </button>
+      <button
+        onClick={() => handleToggle(true)}
+        style={{
+          padding: "6px 14px",
+          borderRadius: "20px",
+          border: "none",
+          background: isAnnual ? "#6366f1" : "transparent",
+          color: isAnnual ? "#fff" : "#64748b",
+          fontWeight: 600,
+          cursor: "pointer",
+          transition: "all 0.2s"
+        }}
+      >
+        Yearly
+      </button>
+    </div>
+  );
+};
 
 // 15. CalendarHeatmap
 export const CalendarHeatmap = ({ style, ...props }) => {

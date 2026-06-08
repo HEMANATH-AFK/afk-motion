@@ -95,13 +95,14 @@ export const FloatingNavbar = ({ items = [], style, ...props }) => {
 };
 
 // 3. HideOnScrollNavbar
-export const HideOnScrollNavbar = ({ children, style, ...props }) => {
+export const HideOnScrollNavbar = ({ children, container, inline = false, style, ...props }) => {
   const [hidden, setHidden] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
+    const target = container?.current || window;
     const handleScroll = () => {
-      const current = window.scrollY;
+      const current = container?.current ? container.current.scrollTop : window.scrollY;
       if (current > lastScrollY.current && current > 80) {
         setHidden(true);
       } else {
@@ -109,16 +110,16 @@ export const HideOnScrollNavbar = ({ children, style, ...props }) => {
       }
       lastScrollY.current = current;
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    target.addEventListener("scroll", handleScroll, { passive: true });
+    return () => target.removeEventListener("scroll", handleScroll);
+  }, [container]);
 
   return (
     <motion.div
       animate={{ y: hidden ? "-100%" : "0%" }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       style={{
-        position: "fixed",
+        position: inline ? "absolute" : "fixed",
         top: 0,
         left: 0,
         right: 0,
@@ -133,7 +134,7 @@ export const HideOnScrollNavbar = ({ children, style, ...props }) => {
 };
 
 // 4. MorphNavbar
-export const MorphNavbar = ({ items = [], style, ...props }) => {
+export const MorphNavbar = ({ items = [], onItemClick, style, ...props }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   return (
     <motion.div
@@ -141,19 +142,22 @@ export const MorphNavbar = ({ items = [], style, ...props }) => {
       style={{
         display: "inline-flex",
         alignItems: "center",
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.07)",
+        background: "rgba(10, 10, 15, 0.85)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        border: "1px solid rgba(255,255,255,0.08)",
         borderRadius: "24px",
-        padding: "8px 16px",
+        padding: "8px 18px",
         cursor: "pointer",
         overflow: "hidden",
         height: "50px",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.25)",
         ...style
       }}
       onClick={() => setIsExpanded(!isExpanded)}
       {...props}
     >
-      <motion.span layout="position" style={{ fontWeight: 700, marginRight: isExpanded ? "12px" : 0 }}>
+      <motion.span layout="position" style={{ fontWeight: 700, marginRight: isExpanded ? "12px" : 0, color: "#fff" }}>
         Menu
       </motion.span>
       <AnimatePresence>
@@ -162,10 +166,25 @@ export const MorphNavbar = ({ items = [], style, ...props }) => {
             initial={{ opacity: 0, width: 0 }}
             animate={{ opacity: 1, width: "auto" }}
             exit={{ opacity: 0, width: 0 }}
-            style={{ display: "flex", gap: "10px", alignItems: "center" }}
+            style={{ display: "flex", gap: "14px", alignItems: "center" }}
           >
             {items.map((item, i) => (
-              <span key={i} style={{ color: "#94a3b8", fontSize: "0.85rem", whiteSpace: "nowrap" }}>
+              <span 
+                key={i} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onItemClick && onItemClick(item, i);
+                }}
+                style={{ 
+                  color: "#94a3b8", 
+                  fontSize: "0.85rem", 
+                  whiteSpace: "nowrap", 
+                  cursor: "pointer",
+                  transition: "color 0.2s" 
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#94a3b8")}
+              >
                 {item}
               </span>
             ))}
@@ -340,7 +359,7 @@ export const MegaMenu = ({ trigger, children, style, ...props }) => {
 };
 
 // 9. CircularMenu (Fires buttons radially)
-export const CircularMenu = ({ icon = "+", items = [], style, ...props }) => {
+export const CircularMenu = ({ icon = "+", items = [], onItemClick, style, ...props }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div style={{ position: "relative", width: "50px", height: "50px", ...style }} {...props}>
@@ -356,7 +375,9 @@ export const CircularMenu = ({ icon = "+", items = [], style, ...props }) => {
           fontSize: "1.5rem",
           border: "none",
           cursor: "pointer",
-          zIndex: 10
+          zIndex: 10,
+          boxShadow: "0 4px 15px rgba(99, 102, 241, 0.4)",
+          position: "relative"
         }}
       >
         {icon}
@@ -365,32 +386,41 @@ export const CircularMenu = ({ icon = "+", items = [], style, ...props }) => {
         {isOpen &&
           items.map((item, idx) => {
             const angle = (idx * (360 / items.length) * Math.PI) / 180;
-            const dist = 70; // radial offset
+            const dist = 80;
             const targetX = Math.cos(angle) * dist;
             const targetY = Math.sin(angle) * dist;
+            const isText = typeof item === "string" && item.length > 2;
             return (
               <motion.div
                 key={idx}
                 initial={{ scale: 0, opacity: 0, x: 0, y: 0 }}
                 animate={{ scale: 1, opacity: 1, x: targetX, y: targetY }}
                 exit={{ scale: 0, opacity: 0, x: 0, y: 0 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onItemClick && onItemClick(item, idx);
+                }}
                 transition={{ type: "spring", stiffness: 220, damping: 15 }}
                 style={{
                   position: "absolute",
-                  left: "10px",
-                  top: "10px",
-                  width: "30px",
-                  height: "30px",
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(255,255,255,0.06)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  left: isText ? "-15px" : "8px",
+                  top: "8px",
+                  width: isText ? "auto" : "34px",
+                  height: "34px",
+                  padding: isText ? "0 12px" : "0",
+                  borderRadius: isText ? "12px" : "50%",
+                  backgroundColor: "rgba(15, 23, 42, 0.95)",
+                  border: "1px solid rgba(255,255,255,0.12)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#fff",
+                  color: "#f8fafc",
                   fontSize: "0.8rem",
+                  fontWeight: 600,
                   cursor: "pointer",
-                  zIndex: 9
+                  zIndex: 9,
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+                  whiteSpace: "nowrap"
                 }}
               >
                 {item}
@@ -403,7 +433,7 @@ export const CircularMenu = ({ icon = "+", items = [], style, ...props }) => {
 };
 
 // 10. DockMenu (macOS scale proximity dock)
-export const DockMenu = ({ items = [], style, ...props }) => {
+export const DockMenu = ({ items = [], onItemClick, style, ...props }) => {
   const [hoveredIdx, setHoveredIdx] = useState(null);
   return (
     <div
@@ -411,12 +441,15 @@ export const DockMenu = ({ items = [], style, ...props }) => {
         display: "flex",
         alignItems: "flex-end",
         gap: "12px",
-        padding: "10px 20px",
-        background: "rgba(255,255,255,0.02)",
-        border: "1px solid rgba(255,255,255,0.06)",
-        borderRadius: "20px",
+        padding: "12px 20px",
+        background: "rgba(10, 10, 15, 0.85)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "24px",
         width: "fit-content",
-        height: "60px",
+        height: "64px",
+        boxShadow: "0 12px 40px rgba(0, 0, 0, 0.3)",
         ...style
       }}
       {...props}
@@ -425,27 +458,35 @@ export const DockMenu = ({ items = [], style, ...props }) => {
         let scale = 1;
         if (hoveredIdx !== null) {
           const diff = Math.abs(idx - hoveredIdx);
-          if (diff === 0) scale = 1.35;
-          else if (diff === 1) scale = 1.18;
+          if (diff === 0) scale = 1.3;
+          else if (diff === 1) scale = 1.15;
         }
+        const isText = typeof item === "string" && item.length > 2;
         return (
           <motion.div
             key={idx}
             onMouseEnter={() => setHoveredIdx(idx)}
             onMouseLeave={() => setHoveredIdx(null)}
+            onClick={() => onItemClick && onItemClick(item, idx)}
             animate={{ scale }}
             transition={{ type: "spring", stiffness: 350, damping: 18 }}
             style={{
-              width: "32px",
-              height: "32px",
-              borderRadius: "8px",
-              backgroundColor: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              width: isText ? "auto" : "36px",
+              minWidth: isText ? "54px" : "36px",
+              height: "36px",
+              padding: isText ? "0 12px" : "0",
+              borderRadius: "10px",
+              backgroundColor: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.12)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              transformOrigin: "bottom center"
+              transformOrigin: "bottom center",
+              color: "#f8fafc",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              whiteSpace: "nowrap"
             }}
           >
             {item}

@@ -32,6 +32,7 @@ export const ComponentShowcasePage: React.FC = () => {
   const [previewKey, setPreviewKey] = useState(0);
   const [isExitVisible, setIsExitVisible] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [containerReady, setContainerReady] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Sync route params to zustand store
@@ -42,6 +43,14 @@ export const ComponentShowcasePage: React.FC = () => {
       }
     }
   }, [urlCategory, urlComponent, selectedCategory, selectedComponent, setSelectedComponent]);
+
+  useEffect(() => {
+    setContainerReady(false);
+    const timer = setTimeout(() => {
+      setContainerReady(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [selectedComponent]);
 
   // Retrieve current component schemas
   const compMeta = useMemo(() => {
@@ -86,6 +95,14 @@ export const ComponentShowcasePage: React.FC = () => {
       return (
         <div className="text-red-400 flex items-center gap-2 text-xs font-mono">
           <AlertCircle className="w-4 h-4" /> Component {selectedComponent} not found in package.
+        </div>
+      );
+    }
+
+    if (!containerReady && (compMeta.category === "scroll" || compMeta.importName === "HeroParallax")) {
+      return (
+        <div className="flex items-center justify-center w-full h-[300px] text-slate-500 text-xs font-mono">
+          <span className="animate-pulse">Loading preview container...</span>
         </div>
       );
     }
@@ -188,7 +205,7 @@ export const ComponentShowcasePage: React.FC = () => {
     const supportsChildren = compMeta.props.some(p => p.name === "children") || 
                              ["GlassCard", "TiltCard", "GlowCard", "MagneticCard", "ThreeDCard", "AnimatedProfileCard", "ProductCard", "PricingCard", 
                               "AnimatedModal", "BlurModal", "SlideModal", "ZoomModal", "BottomSheet", "ConfirmDialog",
-                              "SidebarMenu", "SlideMenu", "MobileDrawer", "MegaMenu",
+                              "SidebarMenu", "SlideMenu", "MobileDrawer", "MegaMenu", "HeroParallax",
                               "Spotlight", "BentoGrid", "HoverScale", "HoverGrow", "HoverShrink", "HoverLift", 
                               "HoverFloat", "HoverTilt", "HoverRotate", "HoverFlip", "HoverGlow", "HoverPulse", 
                               "HoverShake", "HoverBounce", "HoverRipple", "HoverMagnetic", "HoverBorderExpand", 
@@ -204,7 +221,32 @@ export const ComponentShowcasePage: React.FC = () => {
                               compMeta.category === "hover";
 
     // Build children widgets based on category / type
-    if (resolvedProps.children !== undefined) {
+    if (compMeta.importName === "BentoGrid") {
+      childrenNode = (
+        <>
+          <div className="md:col-span-2 p-5 bg-slate-900/40 border border-slate-800 rounded-xl flex flex-col justify-end min-h-[160px] space-y-2">
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-sm font-bold">⚡</div>
+            <h4 className="text-xs font-bold text-white">Speed & Performance</h4>
+            <p className="text-[10px] text-slate-500">Hardware accelerated transitions at 60fps.</p>
+          </div>
+          <div className="p-5 bg-slate-900/40 border border-slate-800 rounded-xl flex flex-col justify-end min-h-[160px] space-y-2">
+            <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400 text-sm font-bold">✨</div>
+            <h4 className="text-xs font-bold text-white">Aesthetics</h4>
+            <p className="text-[10px] text-slate-500">Premium design standards.</p>
+          </div>
+          <div className="p-5 bg-slate-900/40 border border-slate-800 rounded-xl flex flex-col justify-end min-h-[160px] space-y-2">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm font-bold">🔒</div>
+            <h4 className="text-xs font-bold text-white">Secure Inputs</h4>
+            <p className="text-[10px] text-slate-500">Strict form validation hooks.</p>
+          </div>
+          <div className="md:col-span-2 p-5 bg-slate-900/40 border border-slate-800 rounded-xl flex flex-col justify-end min-h-[160px] space-y-2">
+            <div className="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center text-pink-400 text-sm font-bold">🎨</div>
+            <h4 className="text-xs font-bold text-white">Fully Customizable</h4>
+            <p className="text-[10px] text-slate-500">Tailored property sliders directly in our sandboxes.</p>
+          </div>
+        </>
+      );
+    } else if (resolvedProps.children !== undefined) {
       if (typeof resolvedProps.children === "string" && resolvedProps.children.includes("<")) {
         childrenNode = <div dangerouslySetInnerHTML={{ __html: resolvedProps.children }} />;
       } else {
@@ -229,6 +271,13 @@ export const ComponentShowcasePage: React.FC = () => {
             <p className="text-[10px] text-slate-500 mt-1">Viewport Entrance Block</p>
           </div>
         );
+      } else if (compMeta.importName === "HeroParallax") {
+        childrenNode = (
+          <div className="text-center p-8 bg-slate-900/50 border border-slate-800/60 rounded-xl max-w-sm backdrop-blur-md mx-auto">
+            <h1 className="text-lg font-bold text-white mb-2">Parallax Header</h1>
+            <p className="text-[10px] text-slate-400">Scroll the container below to watch layers translate at different speeds.</p>
+          </div>
+        );
       } else {
         childrenNode = (
           <div className="text-center p-4 bg-slate-900/40 border border-slate-800/50 rounded-xl w-44">
@@ -241,7 +290,7 @@ export const ComponentShowcasePage: React.FC = () => {
     // Wrap elements by category constraints to demonstrate actual layout functionality
     try {
       // 1. Scroll Simulator Layout
-      if (compMeta.category === "scroll") {
+      if (compMeta.category === "scroll" || compMeta.importName === "HeroParallax") {
         propsObj.container = scrollRef;
         const rendered = supportsChildren ? (
           <Component key={previewKey} {...propsObj}>{childrenNode}</Component>
@@ -272,9 +321,9 @@ export const ComponentShowcasePage: React.FC = () => {
         );
       }
 
-      // 2. Modals / Overlays Layout (including SidebarMenu, MobileDrawer, CommandPalette)
+      // 2. Modals / Overlays Layout (including SidebarMenu, MobileDrawer, CommandPalette, SlideMenu)
       const isOverlayComponent = compMeta.category === "modals" || 
-                                 ["SidebarMenu", "MobileDrawer", "CommandPalette"].includes(compMeta.importName);
+                                 ["SidebarMenu", "MobileDrawer", "CommandPalette", "SlideMenu"].includes(compMeta.importName);
       if (isOverlayComponent) {
         propsObj.inline = true;
         propsObj.isOpen = isModalOpen;

@@ -47,9 +47,18 @@ export const AnimatedInput = ({ style, ...props }) => {
 };
 
 // 2. FloatingLabelInput
-export const FloatingLabelInput = ({ label, value = "", onChange, style, ...props }) => {
+export const FloatingLabelInput = ({ label, value: controlledValue, onChange, style, ...props }) => {
   const [focused, setFocused] = useState(false);
-  const isFilled = value.length > 0;
+  const [localValue, setLocalValue] = useState("");
+  const value = controlledValue !== undefined ? controlledValue : localValue;
+  const isFilled = value !== undefined && value !== null && value.toString().length > 0;
+
+  const handleChange = (e) => {
+    if (controlledValue === undefined) {
+      setLocalValue(e.target.value);
+    }
+    if (onChange) onChange(e);
+  };
 
   return (
     <div style={{ position: "relative", width: "100%", paddingTop: "14px" }}>
@@ -72,7 +81,7 @@ export const FloatingLabelInput = ({ label, value = "", onChange, style, ...prop
       </motion.label>
       <input
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         style={{
@@ -87,18 +96,28 @@ export const FloatingLabelInput = ({ label, value = "", onChange, style, ...prop
 };
 
 // 3. PasswordStrengthInput
-export const PasswordStrengthInput = ({ value = "", onChange, style, ...props }) => {
+export const PasswordStrengthInput = ({ value: controlledValue, onChange, style, ...props }) => {
+  const [localValue, setLocalValue] = useState("");
+  const value = controlledValue !== undefined ? controlledValue : localValue;
   const [strength, setStrength] = useState(0);
 
   useEffect(() => {
     let score = 0;
-    if (value.length > 5) score += 20;
-    if (value.length > 9) score += 20;
-    if (/[A-Z]/.test(value)) score += 20;
-    if (/[0-9]/.test(value)) score += 20;
-    if (/[^A-Za-z0-9]/.test(value)) score += 20;
+    const valStr = value ? value.toString() : "";
+    if (valStr.length > 5) score += 20;
+    if (valStr.length > 9) score += 20;
+    if (/[A-Z]/.test(valStr)) score += 20;
+    if (/[0-9]/.test(valStr)) score += 20;
+    if (/[^A-Za-z0-9]/.test(valStr)) score += 20;
     setStrength(score);
   }, [value]);
+
+  const handleChange = (e) => {
+    if (controlledValue === undefined) {
+      setLocalValue(e.target.value);
+    }
+    if (onChange) onChange(e);
+  };
 
   const getColor = () => {
     if (strength <= 40) return "#ef4444";
@@ -111,7 +130,7 @@ export const PasswordStrengthInput = ({ value = "", onChange, style, ...props })
       <input
         type="password"
         value={value}
-        onChange={onChange}
+        onChange={handleChange}
         style={baseInputStyle}
         {...props}
       />
@@ -216,7 +235,9 @@ export const AutoCompleteInput = ({ suggestions = [], onSelect, style, ...props 
   const [val, setVal] = useState("");
   const [focused, setFocused] = useState(false);
 
-  const filtered = suggestions.filter((s) => s.toLowerCase().startsWith(val.toLowerCase()) && s !== val);
+  // Safeguard suggestions mapping split in case of string
+  const itemsList = typeof suggestions === "string" ? suggestions.split(",") : suggestions;
+  const filtered = itemsList.filter((s) => s.toLowerCase().startsWith(val.toLowerCase()) && s !== val);
 
   return (
     <div style={{ position: "relative", width: "100%", ...style }}>
@@ -250,9 +271,11 @@ export const AutoCompleteInput = ({ suggestions = [], onSelect, style, ...props 
             {filtered.map((item, idx) => (
               <div
                 key={idx}
-                onClick={() => {
+                onMouseDown={(e) => {
+                  e.preventDefault();
                   setVal(item);
                   onSelect && onSelect(item);
+                  setFocused(false);
                 }}
                 style={{ padding: "10px 16px", cursor: "pointer", color: "#94a3b8" }}
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)")}

@@ -266,18 +266,21 @@ export const RotateText = ({ words = [], delayInterval = 2500, style, ...props }
 };
 
 // 11. InfiniteTicker
-export const InfiniteTicker = ({ children, speed = 25, style, ...props }) => (
-  <div style={{ overflow: "hidden", display: "flex", width: "100%", ...style }} {...props}>
-    <motion.div
-      animate={{ x: ["0%", "-50%"] }}
-      transition={{ repeat: Infinity, ease: "linear", duration: speed }}
-      style={{ display: "flex", gap: "2rem", whiteSpace: "nowrap" }}
-    >
-      <div style={{ display: "flex", gap: "2rem" }}>{children}</div>
-      <div style={{ display: "flex", gap: "2rem" }}>{children}</div>
-    </motion.div>
-  </div>
-);
+export const InfiniteTicker = ({ children, text, speed = 25, style, ...props }) => {
+  const content = children || text;
+  return (
+    <div style={{ overflow: "hidden", display: "flex", width: "100%", ...style }} {...props}>
+      <motion.div
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ repeat: Infinity, ease: "linear", duration: speed }}
+        style={{ display: "flex", gap: "2rem", whiteSpace: "nowrap" }}
+      >
+        <div style={{ display: "flex", gap: "2rem" }}>{content}</div>
+        <div style={{ display: "flex", gap: "2rem" }}>{content}</div>
+      </motion.div>
+    </div>
+  );
+};
 
 // 12. MarqueeText
 export const MarqueeText = ({ text = "Marquee Text Effect", speed = 20, style, ...props }) => (

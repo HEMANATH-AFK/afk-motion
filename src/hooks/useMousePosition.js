@@ -98,7 +98,7 @@ export function useMousePosition(ref) {
         window.removeEventListener("mousemove", handleMouseMove);
       }
     };
-  }, [ref]);
+  }, [ref.current]);
 
   return {
     position,

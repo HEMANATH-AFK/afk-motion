@@ -20,8 +20,8 @@ const baseVariants = {
   flipInY: { hidden: { opacity: 0, rotateY: 90 }, visible: { opacity: 1, rotateY: 0 } },
   blurIn: { hidden: { opacity: 0, filter: "blur(16px)" }, visible: { opacity: 1, filter: "blur(0px)" } },
   expandIn: { 
-    hidden: { opacity: 0, clipPath: "inset(45% 45% 45% 45%)" }, 
-    visible: { opacity: 1, clipPath: "inset(0% 0% 0% 0%)" } 
+    hidden: { opacity: 0, clipPath: "inset(50% 50% 50% 50% rounded 12px)" }, 
+    visible: { opacity: 1, clipPath: "inset(0% 0% 0% 0% rounded 12px)" } 
   },
   bounceIn: { hidden: { opacity: 0, scale: 0.3 }, visible: { opacity: 1, scale: 1 } },
   elasticIn: { hidden: { opacity: 0, scale: 0.4, y: 60 }, visible: { opacity: 1, scale: 1, y: 0 } },

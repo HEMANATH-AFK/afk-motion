@@ -4,6 +4,7 @@ import { Landing } from "./pages/Landing";
 import { ShowcaseDashboard } from "./pages/ShowcaseDashboard";
 import { DocsGuide } from "./pages/DocsGuide";
 import { ComponentShowcasePage } from "./pages/ComponentShowcasePage";
+import { ScrollShowcasePage } from "./pages/ScrollShowcasePage";
 import { Navbar } from "./components/Navbar";
 import { CommandPalette } from "./components/CommandPalette";
 import { useDocsStore } from "./store/useDocsStore";
@@ -33,6 +34,7 @@ export const App: React.FC = () => {
             <Route path="/" element={<Landing />} />
             <Route path="/dashboard" element={<ShowcaseDashboard />} />
             <Route path="/docs" element={<DocsGuide />} />
+            <Route path="/explore/scroll/:component" element={<ScrollShowcasePage />} />
             <Route path="/explore/:category/:component" element={<ComponentShowcasePage />} />
             
             {/* Fallback routing */}
